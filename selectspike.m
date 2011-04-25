@@ -161,7 +161,9 @@ if graphtoo
       yy = sw_sig2log(yy/sigm);
       a=axis;
       idx=find(xx>=a(1) & xx<=a(2) & yy>=a(3) & yy<=a(4));
-      [nn,xx,yy] = hist2(xx(idx),yy(idx), phsc_data{figh}.axesw, phsc_data{figh}.axesh);
+      [nn,xx,yy] = hist2(xx(idx),yy(idx), ...
+          [a(1) (a(2)-a(1))/phsc_data{figh}.axesw a(2)], ...
+          [a(3) (a(4)-a(3))/phsc_data{figh}.axesh a(4)]);
       
       nn = gsmooth(gsmooth(nn,2.5)',1)';
     case 'histo'
@@ -192,7 +194,8 @@ if graphtoo
   colormap(hotpow(200,.25))
   nn=sort(nn(:));
   if ~isempty(nn)
-    caxis([0 max(1,nn(ceil(length(nn)*.975)))]);
+%     caxis([0 max(1,nn(ceil(length(nn)*.975)))]);
+    caxis([0 max(1,nn(ceil(length(nn)*.9999)))]);
   end
   ytick = uniq(sort([[-200:50:200] [-50:10:50] [-20:5:20]]));
   set(gca,'ytick',sw_sig2log(ytick),'ytickl',ytick,...

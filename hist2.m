@@ -13,6 +13,9 @@ function [nn,xx,yy] = hist2(x,y, nx,ny,makenan)
 %    mapped to the leftmost and rightmost bins as appropriate, and similarly
 %    for y-values outside the range (Y0-DY/2,Y1+DY/2). Instead, such values
 %    can be discarded by calling HIST2(x,y, nx,ny, 1).
+%    CAUTION: With NX or NY simple integers, this function does NOT ensure
+%    that every data point falls within a bin. Rather, the bin centers
+%    are placed based on percentiles of the data.
 
 if nargin<3
   nx=10;
@@ -28,7 +31,7 @@ if length(nx)==3
   x0=nx(1);
   dx=nx(2);
   x1=nx(3);
-  nx=1+(x1-x0)/dx;
+  nx=round(1+(x1-x0)/dx);
 elseif length(nx)==1
   x_ = sort(x); N=length(x);
   x0 = x_(ceil(N/nx));
@@ -43,7 +46,7 @@ if length(ny)==3
   y0=ny(1);
   dy=ny(2);
   y1=ny(3);
-  ny=1+(y1-y0)/dy;
+  ny=round(1+(y1-y0)/dy);
 elseif length(ny)==1
   y_ = sort(y); N=length(y);
   y0 = y_(ceil(N/ny));
