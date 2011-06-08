@@ -1,8 +1,8 @@
 function gdspk = selspk_trace(spk,dat,tt)
 % SELSPKTRACE - Interactive posthoc spike classification
 %    gdspk = SELSPKTRACE(spk,dat,tt) starts user interaction for selecting
-%    spikes based on previous SUC2SPIKE output SPK.
-%    gdspk = SELSPKTRACE(dat,tt) calls SUC2SPIKE internally with standard
+%    spikes based on previous DETECTSPIKE output SPK.
+%    gdspk = SELSPKTRACE(dat,tt) calls DETECTSPIKE internally with standard
 %    parameters.
 %    gdspk = SELSPKTRACE(spk) does not plot a trace.
 %
@@ -20,7 +20,7 @@ elseif nargin==2
   dt = mean(diff(tt)/1.0);
   [b,a] = butterhigh1(dt);
   flt = filtfilt(b,a,dat);
-  spk = suc2spike(flt,tt);
+  spk = detectspike(flt,tt);
   idx = round((spk.tms-tt(1))./dt)+1;
   spk.amp = dat(idx);
 end

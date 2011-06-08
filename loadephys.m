@@ -50,7 +50,11 @@ switch ext
   case 'daq'
     % Matlab DAQ file
     if nargout>=2
-      [dat,tms]=daqread(fn);
+      if exist('daqread')
+	[dat,tms]=daqread(fn);
+      else
+	error('This version of matlab/octave does not support DAQREAD');
+      end
     else
       dat = daqread(fn);
     end

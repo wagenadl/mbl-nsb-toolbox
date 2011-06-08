@@ -1,10 +1,10 @@
-% SUCEXAMPLE - Example of the use of the functions for suctrode data
+% NERVEEXAMPLE - Example of the use of the functions for nerve data
 
 
 % Load the data and find spikes:
 ch=8;                                   % Select channel to investigate
 [dat,tms] = loadephys('conoextra.daq'); % Load the file
-spk = suc2spike(dat(:,ch), tms);        % Detect the spikes
+spk = detectspike(dat(:,ch), tms);        % Detect the spikes
 
 % Visualize intermediate results:
 figure(1); clf                          % Create a clean figure

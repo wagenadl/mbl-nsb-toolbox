@@ -1,12 +1,12 @@
-function [idx,ion,iof] = sw_getspike(yy,sig,dir)
-% SW_GETSPIKE   Simple spike detection for imaq_slowwave
-%   idx = SW_GETPSIKE(yy,sig) performs simple spike detection:
+function [idx,ion,iof] = dwgetspike(yy,sig,dir)
+% DWGETSPIKE   Simple spike detection for imaq_slowwave
+%   idx = DWGETPSIKE(yy,sig) performs simple spike detection:
 %   (1) find peaks yy>2*sig.
 %   (2) drop minor peaks within 50 samples of major peaks.
 %   (3) repeat for peaks yy<-2*sig.
-%   SW_GETSPIKE(yy,sig,dir) only finds +ve spikes if DIR>0 or only -ve
+%   DWGETSPIKE(yy,sig,dir) only finds +ve spikes if DIR>0 or only -ve
 %   spikes if DIR<0.
-%   [idx, ion, iof] = SW_GETSPIKE(...) also returns entering and exiting
+%   [idx, ion, iof] = DWGETSPIKE(...) also returns entering and exiting
 %   indices for each spike.
 %   If SIG is a tuple [FAC BIN PERC] then the threshold is determined
 %   automatically: the data is split into bins of BIN samples (default: 200
@@ -55,13 +55,17 @@ if dir>=0
   end
   ipk(:)=ipk(:)+ion(:)-1;
   for k=1:K-1
-    if hei(k)<hei(k+1) & ipk(k+1)-ipk(k)<maxdt
-      ipk(k)=0;
+    if hei(k)<hei(k+1) 
+      if ipk(k+1)-ipk(k)<maxdt
+	ipk(k)=0;
+      end
     end
   end
   for k=2:K
-    if hei(k)<hei(k-1) & ipk(k)-ipk(k-1)<maxdt
-      ipk(k)=0;
+    if hei(k)<hei(k-1) 
+      if ipk(k)-ipk(k-1)<maxdt
+	ipk(k)=0;
+      end
     end
   end
   idx1=ipk(ipk>0);
@@ -81,13 +85,17 @@ if dir<=0
   end
   ipk(:)=ipk(:)+ion(:)-1;
   for k=1:K-1
-    if hei(k)>hei(k+1) & ipk(k+1)-ipk(k)<maxdt
-      ipk(k)=0;
+    if hei(k)>hei(k+1)
+      if ipk(k+1)-ipk(k)<maxdt
+	ipk(k)=0;
+      end
     end
   end
   for k=2:K
-    if hei(k)>hei(k-1) & ipk(k)-ipk(k-1)<maxdt
-      ipk(k)=0;
+    if hei(k)>hei(k-1) 
+      if ipk(k)-ipk(k-1)<maxdt
+	ipk(k)=0;
+      end
     end
   end
   idx2=ipk(ipk>0);

@@ -15,7 +15,7 @@ global phsc_data
 figw = w-40;
 figh = h-80;
 f=figure('units','pixels', 'position',[20 40 figw figh], ...
-    'menu', 'none', 'numbertitle', 'off', ...
+    'menubar', 'none', 'numbertitle', 'off', ...
     'name', 'Posthoc_SpikeClass');
 
 phsc_data{f}.loaded=0;
@@ -24,14 +24,16 @@ phsc_data{f}.figh = figh;
 
 butw=90;
 
-uicontrol('string','Done', ...
-    'position',[10 figh-30 butw 25], ... 
-    'style', 'pushbutton',...
-    'callback', @phsc_done);
-
-uicontrol('string','Zoom', ...
-    'position',[figw-butw-10,figh-30 butw 25], ...
-    'tag','zoom', 'style','checkbox', 'value',1);
+if exist('uicontrol')
+  uicontrol('string','Done', ...
+      'position',[10 figh-30 butw 25], ... 
+      'style', 'pushbutton',...
+      'callback', @phsc_done);
+  
+  uicontrol('string','Zoom', ...
+      'position',[figw-butw-10,figh-30 butw 25], ...
+      'tag','zoom', 'style','checkbox', 'value',1);
+end
 
 phsc_data{f}.axesw = figw-60;
 phsc_data{f}.axesh = figh-90;
@@ -39,11 +41,12 @@ axes('units','pixels', ...
     'position',[55 45 phsc_data{f}.axesw phsc_data{f}.axesh],...
     'tag','graph', 'buttondownfcn',@phsc_click);
 hold on
-imagesc(zeros(10,10),'tag','trace','buttondownfcn',@phsc_click);
-plot([0 0],[0 0],'b','linew',2,'tag','lowerline','buttondownfcn',@phsc_click);
-plot(0,0,'b.','markersi',20,'tag','lowerdots','buttondownfcn',@phsc_click);
-plot([0 0],[0 0],'g','linew',2,'tag','upperline','buttondownfcn',@phsc_click);
-plot(0,0,'g.','markersi',20,'tag','upperdots','buttondownfcn',@phsc_click);
+h = imagesc(zeros(10,10));
+set(h, 'tag', 'trace', 'buttondownfcn', @phsc_click);
+plot([0 0],[0 0],'b','linewidth',2,'tag','lowerline','buttondownfcn',@phsc_click);
+plot(0,0,'b.','markersize',20,'tag','lowerdots','buttondownfcn',@phsc_click);
+plot([0 0],[0 0],'g','linewidth',2,'tag','upperline','buttondownfcn',@phsc_click);
+plot(0,0,'g.','markersize',20,'tag','upperdots','buttondownfcn',@phsc_click);
 
 a=axis;
 setappdata(f,'axlim0',a);
@@ -61,7 +64,10 @@ while 1
   catch
     cancel=1;
   end
-  if done | cancel
+  if done
+    break
+  end
+  if cancel
     break
   end
 end
@@ -185,7 +191,11 @@ if graphtoo
       nn = gsmooth(gsmooth(nn,.05)',.5)';
   end
   
-  h = findobj(figh,'tag','trace');
+  h = findobj(figh, 'tag', 'trace');
+  xx=xx([1 end]);
+  yy=yy([1 end]);
+  whos xx
+  whos yy
   set(h,'xdata',xx, 'ydata',yy, 'cdata',nn);
 
   %axis tight
@@ -198,7 +208,7 @@ if graphtoo
     caxis([0 max(1,nn(ceil(length(nn)*.9999)))]);
   end
   ytick = uniq(sort([[-200:50:200] [-50:10:50] [-20:5:20]]));
-  set(gca,'ytick',sw_sig2log(ytick),'ytickl',ytick,...
+  set(gca,'ytick',sw_sig2log(ytick),'yticklabel',ytick,...
       'tickdir','out','ticklen',[.004 .002]);
   axis(a);
 end

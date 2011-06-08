@@ -58,7 +58,7 @@ xlabel 'Time (s)'
 ylabel 'Voltage (mV)'
 title 'After removing 60 Hz interference'
 
-spk=suc2spike(ww,tt,2,2);
+spk=detectspike(ww,tt,2,2);
 gdspk=selectspike(spk);
 
 figure(5); clf
