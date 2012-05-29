@@ -194,8 +194,6 @@ if graphtoo
   h = findobj(figh, 'tag', 'trace');
   xx=xx([1 end]);
   yy=yy([1 end]);
-  whos xx
-  whos yy
   set(h,'xdata',xx, 'ydata',yy, 'cdata',nn);
 
   %axis tight
