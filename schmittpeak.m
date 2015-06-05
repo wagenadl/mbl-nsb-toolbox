@@ -21,11 +21,11 @@ T=length(yy);
 i0pk = iup;
 i1pk = idn;
 if 1
-  if length(i0pk)>0 & i0pk(1)==1
+  if length(i0pk)>0 && i0pk(1)==1
     i0pk = i0pk(2:end);
     i1pk = i1pk(2:end);
   end
-  if length(i1pk)>0 & i1pk(end)==T+1
+  if length(i1pk)>0 && i1pk(end)==T+1
     i0pk = i0pk(1:end-1);
     i1pk = i1pk(1:end-1);
   end

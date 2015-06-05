@@ -140,8 +140,11 @@ if (exist('OCTAVE_VERSION'))
 end;
 
 if(exist('verbose')~=1), %If verbose undefined, print nothing
-	verbose=0;       %This will not tell them the results
+  verbose=0;       %This will not tell them the results
 end;
+if isempty(verbose)
+  verbose=0;
+end
 
 if (nargin <= 8), dFdp='dfdp'; end;
 if (nargin <= 7), dp=.001*(pin*0+1); end; %DT
@@ -220,7 +223,7 @@ for iter=1:niter,
     idx = ~isinf(maxstep);
     limit = abs(maxstep(idx).*pprev(idx));
     chg(idx) = min(max(chg(idx),-limit),limit);
-    if (verbose & any(ochg ~= chg)),
+    if (verbose && any(ochg ~= chg)),
       disp(['Change in parameter(s): ', ...
          sprintf('%d ',find(ochg ~= chg)), 'were constrained']);
     end;
@@ -250,7 +253,7 @@ for iter=1:niter,
   end
   aprec=abs(pprec.*pbest);
 %  [aprec, chg, chgprev]
-  if (all(abs(chg) < aprec) & all(abs(chgprev) < aprec)),
+  if (all(abs(chg) < aprec) && all(abs(chgprev) < aprec)),
     kvg=1;
     if (verbose),
       fprintf('Parameter changes converged to specified precision\n');
@@ -316,10 +319,10 @@ Z=((m-n)*jac'*Qinv*jac)/(n*resid'*Qinv*resid);
 %%disp('Alternate estimate of cov. of param. est.')
 %%acovp=resid'*Qinv*resid/(m-n)*jtgjinv
 
-%Calculate R^2 (Ref Draper & Smith p.46)
+%Calculate R^2 (Ref Draper && Smith p.46)
 %
-r=corrcoef([y(:),f(:)]);
-r2=r(1,2).^2;
+r=corr(y(:), f(:));
+r2=r.^2;
 
 % if someone has asked for it, let them have it
 %
@@ -339,7 +342,7 @@ if (verbose),
   n1 = sum((f-y) < 0);
   n2 = sum((f-y) > 0);
   nrun=sum(abs(diff((f-y)<0)))+1;
-  if ((n1>10)&(n2>10)), % sufficent data for test?
+  if ((n1>10)&&(n2>10)), % sufficent data for test?
     zed=(nrun-(2*n1*n2/(n1+n2)+1)+0.5)/(2*n1*n2*(2*n1*n2-n1-n2)...
       /((n1+n2)^2*(n1+n2-1)));
     if (zed < 0),

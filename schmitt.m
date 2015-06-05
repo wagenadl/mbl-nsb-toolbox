@@ -65,47 +65,24 @@ if ~isempty(typ_use)
   end
 end
 
-if laststyle==0 & ~isempty(typ_use)
-  if typ_use(end)==1
-    idx_use = idx_use(1:end-1);
-    typ_use = typ_use(1:end-1);
+if laststyle==0
+  if ~isempty(typ_use)
+    if typ_use(end)==1
+      idx_use = idx_use(1:end-1);
+      typ_use = typ_use(1:end-1);
+    end
   end
 end
 
 on = idx_use(typ_use==1);
 off = idx_use(typ_use==0);
 
-if laststyle>=2 & length(off)<length(on)
-  if laststyle==3
-    off=[off;inf];
-  else
-    off=[off;length(xx)+1];
+if laststyle>=2
+  if length(off)<length(on)
+    if laststyle==3
+      off=[off;inf];
+    else
+      off=[off;length(xx)+1];
+    end
   end
 end
-
-%%%% on=[];
-%%%% off=[];
-%%%% 
-%%%% i0 = findfirst_le(xx,thr_off);
-%%%% if i0==0
-%%%%   return
-%%%% end
-%%%% 
-%%%% while i0<length(xx)
-%%%%   di = findfirst_ge(xx(i0+1:end),thr_on);
-%%%%   if di==0
-%%%%     break
-%%%%   end
-%%%%   i1 = i0+di;
-%%%%   if i1>=length(xx)
-%%%%     break
-%%%%   end
-%%%%   di = findfirst_le(xx(i1+1:end),thr_off);
-%%%%   if di==0
-%%%%     break
-%%%%   end
-%%%%   i0 = i1+di;
-%%%%   on = [on i1];
-%%%%   off = [off i0];
-%%%% end
-

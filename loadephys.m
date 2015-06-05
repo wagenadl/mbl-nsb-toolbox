@@ -27,11 +27,13 @@ switch ext
     if nargout>=2
       tms=[1:len]'*aux.dt_s;
     end
-    
-    skp1=std(diff(dat(1:2:1e3,1)));
-    skp2=std(diff(dat(2:2:1e3,1)));
-    skp=std(diff(dat(1:1e3,1)));
-    if skp1<skp & skp2<skp
+   
+    N = 2*floor(min(len, 1e4)/2);
+    if all(dat(1:2:N,1)<=dat(2:2:N,1))
+        %skp1=std(diff(dat(1:2:1e3,1)));
+        %skp2=std(diff(dat(2:2:1e3,1)));
+        %skp=std(diff(dat(1:1e3,1)));
+        %if skp1<skp & skp2<skp
       % This must be interleaved min/max data
       fprintf(1,'Assuming min/max data; returning only greatest absolute values\n');
       C=size(dat,2);
@@ -50,11 +52,7 @@ switch ext
   case 'daq'
     % Matlab DAQ file
     if nargout>=2
-      if exist('daqread')
-	[dat,tms]=daqread(fn);
-      else
-	error('This version of matlab/octave does not support DAQREAD');
-      end
+      [dat,tms]=daqread(fn);
     else
       dat = daqread(fn);
     end

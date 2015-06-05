@@ -451,7 +451,7 @@ for k=1:s.llNumEntries
   p(k).asBytes = fread(fd,[N 1],'uint8');
   p(k).asText = repmat('.',[1 N]);
   for n=1:N
-    if p(k).asBytes(n)>=32 & p(k).asBytes(n)<127
+    if p(k).asBytes(n)>=32 && p(k).asBytes(n)<127
       p(k).asText(n) = p(k).asBytes(n);
     end
   end
@@ -496,7 +496,7 @@ end
 if aux.hdr.uActualEpisodes
   ;
 else
-  if ~isempty(epi) & epi~=1
+  if ~isempty(epi) && epi~=1
     error('readabf: episodes specified for non-episodic file');
   end
   epi=[];

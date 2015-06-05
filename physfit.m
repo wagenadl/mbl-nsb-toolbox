@@ -72,10 +72,10 @@ function [fit,yfit] = physfit(fform,x,y,sy,sx,p0,sxy)
 % Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 % --- Interpret arguments and check for size consistency ---
-if nargin<5 | isempty(sx)
+if nargin<5 || isempty(sx)
   sx=zeros(size(x));
 end
-if nargin<4 | isempty(sy)
+if nargin<4 || isempty(sy)
   sy=zeros(size(x));
 end
 if nargin<6
@@ -106,10 +106,10 @@ LSsy = length(sy);
 LSsx = length(sx);
 LSsxy = length(sxy);
 
-if prod(Sx) ~= LSx | prod(Sy) ~= LSy | ...
-      prod(Ssy) ~= LSsy | prod(Ssx) ~= LSsx | ...
-      prod(Ssxy) ~= LSsxy | ...
-      LSx~=LSy | LSx~=LSsy | LSx~=LSsx | LSx~=LSsxy
+if prod(Sx) ~= LSx || prod(Sy) ~= LSy || ...
+      prod(Ssy) ~= LSsy || prod(Ssx) ~= LSsx || ...
+      prod(Ssxy) ~= LSsxy || ...
+      LSx~=LSy || LSx~=LSsy || LSx~=LSsx || LSx~=LSsxy
   error('Inputs must be vectors of the same size.');
 end
 
@@ -189,9 +189,9 @@ switch lower(fform)
     dfdx = @pf_dcos; %@(x,p) (-p(1)*p(2) * sin(p(2)*x + p(3)));
     [p0(2),p0(3),p0(1)] = fitsine(x,y);
   otherwise
-    if length(fform>=6) & strcmp(lower(fform(1:min(5,length(fform)))),'poly-')
+    if length(fform>=6) && strcmp(lower(fform(1:min(5,length(fform)))),'poly-')
       N = str2double(fform(6:end));
-      if N ~= floor(N) | N<1 | N>20
+      if N ~= floor(N) || N<1 || N>20
 	error('poly-n fitting only defined for integer n=1..20');
       end
       str='';
@@ -221,7 +221,7 @@ switch lower(fform)
       k=1;
       fform = [ ' ' fform ' ' ];
       while k<=length(fform)
-	if fform(k)>='A' & fform(k)<='Z'
+	if fform(k)>='A' && fform(k)<='Z'
 	  n = 1+fform(k)-'A';
 	  N = max(N,n);
 	  ins = sprintf('p(%i)',n);
@@ -266,6 +266,7 @@ fit(1).chi2 = nan;
 fit(1).ok = kvg;
 fit(1).sok = rc>sqrt(eps);
 fit(1).caution={};
+fit(1).sumsquares = sum((feval(foo,x,p)-y).^2);
 
 % --- Fit with SY but not SX ---
 if max(sy)>0
@@ -273,7 +274,8 @@ if max(sy)>0
   [f,p,kvg,iter,corp,covp,covr,stdresid,Z,r2,rc] = ...
       leasqr(x,y,p0,foo,1e-4,1e2,wt);
   fit(2).p = p';
-  fit(2).chi2 = sum((feval(foo,x,p)-y).^2.*wt.^2) ./ (N-df);
+  fit(2).sumsquares = sum((feval(foo,x,p)-y).^2.*wt.^2);
+  fit(2).chi2 =  fit(2).sumsquares ./ (N-df);
   fit(2).s = sqrt(diag(covp))' ./ sqrt(fit(2).chi2);
   fit(2).cov = covp ./ fit(2).chi2;
   fit(2).ok = kvg;
@@ -282,7 +284,7 @@ if max(sy)>0
 end
 
 % --- Fit with SX and SY ---
-if max(sx)>0 & max(sy)>0
+if max(sx)>0 && max(sy)>0
   % Set the effective uncertainty to
   %
   %   sy_eff^2 = sy^2 + (df/dx)^2 * sx^2.
@@ -291,7 +293,7 @@ if max(sx)>0 & max(sy)>0
   
   fit(3) = fit(2);
   for iter=1:5
-    if any(isnan(fit(3).p)) | any(isnan(fit(3).s)) | ~fit(3).ok | ~fit(3).sok
+    if any(isnan(fit(3).p)) || any(isnan(fit(3).s)) || ~fit(3).ok || ~fit(3).sok
       p0 = fit(1).p;
     else
       p0 = fit(3).p;
@@ -315,9 +317,10 @@ if max(sx)>0 & max(sy)>0
     wt = 1./sy_eff;
     [f,p,kvg,iter,corp,covp,covr,stdresid,Z,r2,rc] = ...
 	leasqr(x,y,p0,foo,1e-4,1e2,wt);
-    if kvg | iter==1
+    if kvg || iter==1
       fit(3).p = p';
-      fit(3).chi2 = sum((feval(foo,x,p)-y).^2.*wt.^2) ./ (N-df);
+      fit(3).sumsquares = sum((feval(foo,x,p)-y).^2.*wt.^2);
+      fit(3).chi2 = fit(3).sumsquares ./ (N-df);
       fit(3).s = sqrt(diag(covp))' ./ sqrt(fit(3).chi2);
       fit(3).cov = covp ./ fit(3).chi2;
       fit(3).ok=kvg;
@@ -338,7 +341,10 @@ for k=1:length(fit)
 end
 
 for k=1:length(fit)
-    fit(k).form = form;
+  fit(k).form = form;
+  fit(k).nparam = df;
+  fit(k).dof = N - df;
+  fit(k).Ndata = N;
 end
 
 if nargout>=2

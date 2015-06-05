@@ -4,7 +4,7 @@ function x=atoi(s)
 %   S does not start with a digit (or -).
 %   Exception: spaces are removed from beginning
 
-while ~isempty(s) & (s(1)==' ' | s(1)=='	')
+while ~isempty(s) && (s(1)== ' ' || s(1)=='	')
   s=s(2:end);
 end
 
