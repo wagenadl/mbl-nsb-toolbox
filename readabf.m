@@ -44,8 +44,9 @@ if aux.hdr.uFileSignature ~= hex2dec('32464241')
 end
 
 aux.hdr.uFileVersionNumber = fread(fd,1,'uint32');
-if aux.hdr.uFileVersionNumber~=hex2dec('02000000')
-  error('readabf: bad file version number');
+if aux.hdr.uFileVersionNumber<hex2dec('02000000') || ...
+  aux.hdr.uFileVersionNumber>hex2dec('02990000')
+  error('readabf: bad file version number: currently supports 02.00.00.00 through 02.99.00.00');
 end
 
 aux.hdr.uFileInfoSize = fread(fd,1,'uint32');
