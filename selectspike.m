@@ -170,7 +170,7 @@ if graphtoo
     caxis([0 max(1, nn(ceil(length(nn)*.975)))]);
   end
   ytick = uniq(sort([[-200:50:200] [-50:10:50] [-20:5:20]]));
-  set(gca, 'ytick', sw_sig2log(ytick), 'ytickl', ytick, ...
+  set(gca, 'ytick', sw_sig2log(ytick), 'yticklabel', ytick, ...
       'tickdir', 'out', 'ticklen', [.004 .002]);
   axis(a);
 end
