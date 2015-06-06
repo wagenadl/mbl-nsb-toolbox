@@ -33,6 +33,7 @@ figh = h-80;
 f=figure('units','pixels', 'position',[20 40 figw figh], ...
     'menu', 'none', 'numbertitle', 'off', ...
     'name', 'Posthoc_SpikeClass');
+f = double(f);
 
 phsc_data{f}.loaded=0;
 phsc_data{f}.figw = figw;
@@ -97,7 +98,7 @@ end
 %----------------------------------------------------------------------
 function phsc_loaddat(figh,spk)
 global phsc_data
-
+figh = double(figh);
 
 phsc_data{figh}.ifn = 'data';
 phsc_data{figh}.src.spk.tms = spk.tms;
@@ -111,6 +112,7 @@ phsc_process_spikes(figh);
 %----------------------------------------------------------------------
 function phsc_process_spikes(figh)
 global phsc_data
+figh = double(figh);
 phsc_data{figh}.loaded = 1;
 phsc_data{figh}.c = 1;
 switch phsc_data{figh}.src.type
@@ -180,6 +182,7 @@ phsc_redraw(figh,1);
 %----------------------------------------------------------------------
 function phsc_redraw(figh,graphtoo)
 global phsc_data
+figh = double(figh);
 
 axes(findobj(figh,'tag','graph'));
 a=getappdata(figh,'axlim');
@@ -208,7 +211,7 @@ set(h,'xdata',[a(1); xx; a(2)], 'ydata',[yy(1); yy; yy(end)]);
 %----------------------------------------------------------------------
 function phsc_click(h,x)
 global phsc_data
-figh=gcbf;
+figh=double(gcbf);
 
 iszoom = get(findobj(figh,'tag','zoom'),'value');
 
@@ -302,7 +305,7 @@ end
 %----------------------------------------------------------------------
 function phsc_move(h,xy0,xy1,whch,xx,yy,ii)
 global phsc_data
-figh=get(h,'parent');
+figh=double(get(h,'parent'));
 c=phsc_data{figh}.c;
 
 xx(ii)=xy1(1);
@@ -320,19 +323,21 @@ phsc_redraw(figh,0);
 %----------------------------------------------------------------------
 function phsc_channelselect(h,x)
 global phsc_data
-figh = gcbf;
+figh = double(gcbf);
 phsc_data{figh}.c = get(gcbo,'userdata');
 set(findobj(gcbf,'tag','channelselect'),'fontw','normal');
 set(gcbo,'fontw','bold');
 phsc_redraw(figh,1);
 
 function phsc_done(h,x)
-setappdata(gcbf,'completed',1);
-uiresume(gcbf);
+figh = double(gcbf);
+setappdata(figh,'completed',1);
+uiresume(figh);
 
 %----------------------------------------------------------------------
 function gdspk = phsc_getdata(figh)
 global phsc_data
+figh = double(figh);
 
 gdspk.tms=[];
 gdspk.amp=[];
