@@ -198,7 +198,7 @@ switch lower(fform)
       form='';
       for n=1:N+1
 	str = sprintf('%s + p(%i)*x.^%i',str,n,N+1-n);
-    form = sprintf('%s + %c*x.^%i',str,'A'+(n-1),N+1-n);
+        form = sprintf('%s + %c*x.^%i',form,'A'+(n-1),N+1-n);
       end
       foo = inline(str(4:end-5),'x','p');
       form=form(4:end-5);
@@ -257,8 +257,8 @@ df = length(p0); N = length(x);
 
 % --- Fit without SX or SY ---
 wt=ones(size(sy));
-[f,p,kvg,iter,corp,covp,covr,stdresid,Z,r2,rc] = ...
-    leasqr(x,y,p0,foo,1e-4,1e2,wt);
+[f,p,kvg,itr,corp,covp,covr,stdresid,Z,r2,rc] = ...
+    dleasqr(x,y,p0,foo,1e-4,1e2,wt);
 fit(1).p = p';
 fit(1).s = sqrt(diag(covp))';
 fit(1).cov = covp;
@@ -267,12 +267,13 @@ fit(1).ok = kvg;
 fit(1).sok = rc>sqrt(eps);
 fit(1).caution={};
 fit(1).sumsquares = sum((feval(foo,x,p)-y).^2);
+fit(1).R2 = 1 - fit(1).sumsquares / sum((y-mean(y)).^2);
 
 % --- Fit with SY but not SX ---
 if max(sy)>0
   wt = 1./sy;
-  [f,p,kvg,iter,corp,covp,covr,stdresid,Z,r2,rc] = ...
-      leasqr(x,y,p0,foo,1e-4,1e2,wt);
+  [f,p,kvg,itr,corp,covp,covr,stdresid,Z,r2,rc] = ...
+      dleasqr(x,y,p0,foo,1e-4,1e2,wt);
   fit(2).p = p';
   fit(2).sumsquares = sum((feval(foo,x,p)-y).^2.*wt.^2);
   fit(2).chi2 =  fit(2).sumsquares ./ (N-df);
@@ -315,8 +316,8 @@ if max(sx)>0 && max(sy)>0
     sy_eff = sqrt(sy.^2 + dfdx_.^2.*sx.^2 + dfdx_.*sxy);
   
     wt = 1./sy_eff;
-    [f,p,kvg,iter,corp,covp,covr,stdresid,Z,r2,rc] = ...
-	leasqr(x,y,p0,foo,1e-4,1e2,wt);
+    [f,p,kvg,itr,corp,covp,covr,stdresid,Z,r2,rc] = ...
+	dleasqr(x,y,p0,foo,1e-4,1e2,wt);
     if kvg || iter==1
       fit(3).p = p';
       fit(3).sumsquares = sum((feval(foo,x,p)-y).^2.*wt.^2);

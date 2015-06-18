@@ -1,6 +1,6 @@
 function [f,p,kvg,iter,corp,covp,covr,stdresid,Z,r2,rc_]= ...
-      leasqr(x,y,pin,F,stol,niter,wt,dp,dFdp,options)
-% LEASQR - Levenberg-Marquardt nonlinear regression of f(x,p) to y(x).
+      dleasqr(x,y,pin,F,stol,niter,wt,dp,dFdp,options)
+% DLEASQR - Levenberg-Marquardt nonlinear regression of f(x,p) to y(x).
 %
 % [f,p,kvg,iter,corp,covp,covr,stdresid,Z,r2] =
 %                   leasqr(x,y,pin,F,{stol,niter,wt,dp,dFdp,options})

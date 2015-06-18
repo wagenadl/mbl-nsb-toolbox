@@ -27,7 +27,7 @@ end
 
 S = size(xx);
 
-if S(1)==1 & length(S)==2
+if S(1)==1 && length(S)==2
   xx=xx';
 end
 
@@ -55,6 +55,6 @@ if length(S_)>2
   yy=reshape(yy,S_);
 end
 
-if S(1)==1 & length(S)==2
+if S(1)==1 && length(S)==2
   yy=yy';
 end
