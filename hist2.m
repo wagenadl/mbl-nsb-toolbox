@@ -4,18 +4,23 @@ function [nn,xx,yy] = hist2(x,y, nx,ny,makenan)
 %    bins in the x-direction, and NY bins in the y-direction.
 %    nn = HIST2(...) returns the bin counts instead of plotting; NN will
 %    be shaped NYxNX.
-%    [nn,xx,yy] = HIST2(...) returns the positions of the bin centers also,
-%    with XX a row vector and YY a column vector, suitable for plotting
-%    using IMAGESC(xx,yy,nn).
+%    [nn,xx,yy] = HIST2(...) returns the positions of the bin centers also:
+%    XX will be a row vector and YY a column vector, so that output is
+%    suitable for plotting using IMAGESC(xx,yy,nn).
 %    Instead of NX and NY being scalars, they can be triplets [X0 DX X1]
-%    and [Y0 DY Y0] to represent explicitly the centers of bins.
+%    and [Y0 DY Y1] to represent explicitly the centers of bins.
+%    Or, they can be vectors [X0:DX:X1] (with at least 4 elements). Only
+%    the edges and the step size are actually used.
 %    Normally, x-values that lie outside the range (X0-DX/2,X1+DX/2) are
 %    mapped to the leftmost and rightmost bins as appropriate, and similarly
 %    for y-values outside the range (Y0-DY/2,Y1+DY/2). Instead, such values
 %    can be discarded by calling HIST2(x,y, nx,ny, 1).
 %    CAUTION: With NX or NY simple integers, this function does NOT ensure
 %    that every data point falls within a bin. Rather, the bin centers
-%    are placed based on percentiles of the data.
+%    are placed based on percentiles of the data, such that a fraction 1/NX of
+%    the data will fall to the left of the first bin's center and another 
+%    fraction 1/NX to the right of the last bin's center, and analogously in
+%    the Y direction.
 
 if nargin<3
   nx=10;
@@ -27,7 +32,12 @@ if nargin<5
   makenan=0;
 end
 
-if length(nx)==3
+if length(nx)>3
+  x0=nx(1);
+  dx=mean(diff(nx));
+  x1=nx(end);
+  nx=round(1+(x1-x0)/dx);  
+elseif length(nx)==3
   x0=nx(1);
   dx=nx(2);
   x1=nx(3);
@@ -38,11 +48,16 @@ elseif length(nx)==1
   x1 = x_(ceil(N-N/nx));
   dx = (x1-x0)/(nx-1);
 else
-  error('NX must be a scalar or a [X0 DX X1] triplet');
+  error('NX must be a scalar, a [X0 DX X1] triplet, or a [X0:DX:X1] vector');
 end
 
 
-if length(ny)==3
+if length(ny)>3
+  y0=ny(1);
+  dy=mean(diff(ny));
+  y1=ny(end);
+  ny=round(1+(y1-y0)/dy);  
+elseif length(ny)==3
   y0=ny(1);
   dy=ny(2);
   y1=ny(3);
@@ -53,10 +68,10 @@ elseif length(ny)==1
   y1 = y_(ceil(N-N/ny));
   dy = (y1-y0)/(ny-1);
 else
-  error('NY must be a scalar or a [Y0 DY Y1] triplet');
+  error('NY must be a scalar, a [Y0 DY Y1] triplet, or a [Y0:DY:Y1] vector');
 end
 
-x = floor((x - (x0-dx/2)) / dx);
+x = floor((x(:) - (x0-dx/2)) / dx);
 if makenan
   x(x<0)=nan;
   x(x>=nx)=nan;
@@ -65,7 +80,7 @@ else
   x(x>=nx)=nx-1;
 end
 
-y = floor((y - (y0-dy/2)) / dy);
+y = floor((y(:) - (y0-dy/2)) / dy);
 if makenan
   y(y<0)=nan;
   y(y>=ny)=nan;

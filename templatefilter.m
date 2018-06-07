@@ -10,6 +10,11 @@ function [yy,tpl]=templatefilter(xx,period_sams,f_max,npers)
 %    in units of the sample frequency. Typical: F_MAX = 500/10000.
 %    NPERS is the number of periods to use for estimation.
 %    TEMPLATEFILTER works on vectors, or on the columns of NxD arrays.
+%    PERIOD_SAMS may also be a reference signal which should have the same
+%    length as xx. In that case, the period is determined from the upward
+%    crossings of the reference.
+%    [yy, tpl] = TEMPLATEFILTER(...) also returns the template. This only
+%    works if XX is a vector.
 if nargin<4
   npers = 50;
 end
@@ -27,8 +32,17 @@ if prod(size(xx)) ~= length(xx)
     yy(:,y) = templatefilter(xx(:,y),period_sams,f_max,npers);
   end
   yy = reshape(yy,S);
+  return
 end
 
+% Step zero: convert a reference signal into a period.
+if length(period_sams)>1
+  m = mean(period_sams);
+  s = std(period_sams);
+  
+  [ion,iof] = schmitt(period_sams,m+s/2,m-s/2);
+  period_sams = mean(diff(ion));
+end
 
 % Step one: resample the original signal to make period_sams be integer.
 X=length(xx);

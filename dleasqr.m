@@ -1,5 +1,5 @@
 function [f,p,kvg,iter,corp,covp,covr,stdresid,Z,r2,rc_]= ...
-      dleasqr(x,y,pin,F,stol,niter,wt,dp,dFdp,options)
+    dleasqr(x,y,pin,F,stol,niter,wt,dp,dFdp,options)
 % DLEASQR - Levenberg-Marquardt nonlinear regression of f(x,p) to y(x).
 %
 % [f,p,kvg,iter,corp,covp,covr,stdresid,Z,r2] =
@@ -300,9 +300,11 @@ Vy=1/(1-n/m)*covr;  % Eq. 7-13-22, Bard         %covariance of the data
 
 jtgj_ = jac'*Qinv*jac;
 rc_ = rcond(jtgj_);
-jtgjinv=inv(jtgj_);			%argument of inv may be singular
+%jtgjinv=inv(jtgj_);			%argument of inv may be singular
 
-covp=jtgjinv*jac'*Qinv*Vy*Qinv*jac*jtgjinv; % Eq. 7-5-13, Bard %cov of parm est
+%covp=jtgjinv*jac'*Qinv*Vy*Qinv*jac*jtgjinv; % Eq. 7-5-13, Bard %cov of parm est
+covp=jtgj_ \ (jac'*Qinv*Vy*Qinv*jac) / jtgj_; % Eq. 7-5-13, Bard %cov of parm est
+% DW followed Matlab's recommendation of using \ and / on 6/10/15.
 d=sqrt(abs(diag(covp)));
 corp=covp./(d*d');
 
@@ -313,7 +315,7 @@ else
   covr=diag(covr);                 % convert returned values to compact storage
   stdresid=resid./sqrt(diag(Vy));  % compute then convert for compact storage
 end
-Z=((m-n)*jac'*Qinv*jac)/(n*resid'*Qinv*resid);
+Z=((m-n)*jac'*Qinv*jac)/(n*resid'*Qinv*resid + eps);
 
 %%% alt. est. of cov. mat. of parm.:(Delforge, Circulation, 82:1494-1504, 1990
 %%disp('Alternate estimate of cov. of param. est.')
@@ -321,7 +323,11 @@ Z=((m-n)*jac'*Qinv*jac)/(n*resid'*Qinv*resid);
 
 %Calculate R^2 (Ref Draper && Smith p.46)
 %
-r=corr(y(:), f(:));
+if var(y(:))>0 && var(f(:))>0
+  r=corr(y(:), f(:));
+else
+  r = nan;
+end
 r2=r.^2;
 
 % if someone has asked for it, let them have it

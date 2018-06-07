@@ -1,8 +1,8 @@
 function idx = matchnearest(tt1, tt2, maxdt)
-% MATCHNEAREST - Find matching events in two time series
+% MATCHNEAREST - Find matching events in two point processes
 %   idx = MATCHNEAREST(tt1, tt2) returns a vector in which the k-th
-%   element indicates which event in time series TT2 occured most
-%   closely to the k-th event in time series TT1.
+%   element indicates which event in point process TT2 occured most
+%   closely to the k-th event in point process TT1.
 %   idx = MATCHNEAREST(tt1, tt2, maxdt) specifies a maximum time interval
 %   beyond which matches cannot be declared.
 %   Events that do not have a match result in a zero entry in the IDX.

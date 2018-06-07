@@ -1,9 +1,11 @@
-function [idx,ion,iof] = dwgetspike(yy,sig,dir)
-% DWGETSPIKE   Simple spike detection for imaq_slowwave
-%   idx = DWGETPSIKE(yy,sig) performs simple spike detection:
+function [idx, ion, iof, thr] = dwgetspike(yy, sig, dir)
+% DWGETSPIKE - Simple spike detection
+%   idx = DWGETSPIKE(yy,sig) performs simple spike detection:
 %   (1) find peaks yy>2*sig.
 %   (2) drop minor peaks within 50 samples of major peaks.
 %   (3) repeat for peaks yy<-2*sig.
+%   Caution: minor negative peaks around major positive peaks (and vv)
+%   do not get dropped.
 %   DWGETSPIKE(yy,sig,dir) only finds +ve spikes if DIR>0 or only -ve
 %   spikes if DIR<0.
 %   [idx, ion, iof] = DWGETSPIKE(...) also returns entering and exiting
@@ -16,6 +18,8 @@ function [idx,ion,iof] = dwgetspike(yy,sig,dir)
 %   a lot of junk spikes but is useful for subsequent sorting).
 %   If SIG is a tuple [FAC BIN PERC MAXDT], then the kill interval is set
 %   to MAXDT samples rather than 50.
+%   [idx, ion, iof, thr] = DWGETSPIKE(...) also returns the calculated
+%   threshold
 
 if nargin<3
   dir=0;
@@ -55,17 +59,13 @@ if dir>=0
   end
   ipk(:)=ipk(:)+ion(:)-1;
   for k=1:K-1
-    if hei(k)<hei(k+1) 
-      if ipk(k+1)-ipk(k)<maxdt
-	ipk(k)=0;
-      end
+    if hei(k)<hei(k+1) && ipk(k+1)-ipk(k)<maxdt
+      ipk(k)=0;
     end
   end
   for k=2:K
-    if hei(k)<hei(k-1) 
-      if ipk(k)-ipk(k-1)<maxdt
-	ipk(k)=0;
-      end
+    if hei(k)<hei(k-1) && ipk(k)-ipk(k-1)<maxdt
+      ipk(k)=0;
     end
   end
   idx1=ipk(ipk>0);
@@ -85,17 +85,13 @@ if dir<=0
   end
   ipk(:)=ipk(:)+ion(:)-1;
   for k=1:K-1
-    if hei(k)>hei(k+1)
-      if ipk(k+1)-ipk(k)<maxdt
-	ipk(k)=0;
-      end
+    if hei(k)>hei(k+1) && ipk(k+1)-ipk(k)<maxdt
+      ipk(k)=0;
     end
   end
   for k=2:K
-    if hei(k)>hei(k-1) 
-      if ipk(k)-ipk(k-1)<maxdt
-	ipk(k)=0;
-      end
+    if hei(k)>hei(k-1) && ipk(k)-ipk(k-1)<maxdt
+      ipk(k)=0;
     end
   end
   idx2=ipk(ipk>0);
@@ -113,4 +109,7 @@ if nargout>=2
   iof=[iof1(:); iof2(:)];
 else
   clear ion iof
+end
+if nargout>=4
+  thr = 2*sig;
 end

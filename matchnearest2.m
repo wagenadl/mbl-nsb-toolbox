@@ -1,6 +1,6 @@
 function idx = matchnearest2(tt1, tt2, maxdt)
-% MATCHNEAREST2 - Find unique matching events in two time series
-%    MATCHNEAREST2 is just like MATCHNEAREST2, except that it guarantees
+% MATCHNEAREST2 - Find unique matching events in two point processes
+%    MATCHNEAREST2 is just like MATCHNEAREST, except that it guarantees
 %    that the matches are unique, that is, a given event in TT2 can be matched
 %    to at most one event in TT1 (and vice versa).
 

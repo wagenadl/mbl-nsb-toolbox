@@ -13,6 +13,9 @@ function spk = detectspike(dat,tms,fac,t0,tkill)
 %    threshold factor THR = 4 over RMS noise, the default bin size
 %    of TBIN = 20 ms, and the default minimum interval between detectable
 %    spikes of TKILL = 10 ms.
+%
+%    This is a slightly old-fashioned piece of code. I recommend using 
+%    REFRACTORYSPIKE or TEMPLATESPIKE in new applications.
 
 if nargin<3 
   fac=[];
@@ -36,7 +39,8 @@ end
 dat=dat(:);
 if prod(size(tms))==1
   fs = tms;
-  tstart = 1/fs;
+  tt = [0:length(dat)-1]'/fs;
+  %  tstart = 0; % 1/fs;
 else
   tms=tms(:);
   fs = 1/mean(diff(tms)); % Get sampling frequency
@@ -52,8 +56,8 @@ if fs>4e3
 end
 
 K=ceil(t0*.001*fs); % Number of samples in 20 ms.
-spki = dwgetspike(datf,[fac K 40 tkill*fs/1e3]);
+spki = dwgetspike(datf, [fac K 40 tkill*fs/1e3]);
 
-spk.tms = tstart + (spki-1)/fs;
+spk.tms = tms(spki);
 spk.amp = dat(spki);
 
