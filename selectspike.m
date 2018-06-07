@@ -16,8 +16,8 @@ function [gdspk, idx] = selectspike(spk, ttl)
 global phsc_data
 
 [w, h]=screensize;
-figw = w-40;
-figh = h-80;
+figw = w/2;
+figh = h/2;
 f = figure('units', 'pixels', 'position', [20 40 figw figh], ...
     'menu', 'none', 'numbertitle', 'off', ...
     'name', 'Posthoc_SpikeClass');
