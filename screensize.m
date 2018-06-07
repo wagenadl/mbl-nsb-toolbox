@@ -16,3 +16,5 @@ if nargout<2
   w = [w h];
   clear h;
 end
+w=w/2;
+h=h/2;
