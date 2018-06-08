@@ -15,6 +15,10 @@ function [yy,tpl]=templatefilter(xx,period_sams,f_max,npers)
 %    crossings of the reference.
 %    [yy, tpl] = TEMPLATEFILTER(...) also returns the template. This only
 %    works if XX is a vector.
+%    Ordinarilty, a butterworth low-pass filter is used to create the 
+%    estimate to be subtracted. Set NPERS to a negative number to use
+%    a median filter of width 2*|NPERS| + 1 instead.
+
 if nargin<4
   npers = 50;
 end
@@ -57,8 +61,12 @@ N = floor(Z/int_sams);
 zz = reshape(zz(1:N*int_sams),[int_sams N]);
 
 % Step three: filter consecutive periods
-[b,a]=butterlow1(1/npers);
-zz = filtfilt(b,a,zz')';
+if npers>0
+  [b,a]=butterlow1(1/npers);
+  zz = filtfilt(b,a,zz')';
+else
+  zz = medianfltn(zz', npers)';
+end
 
 % Step four: Smooth the template by assuming there are no
 % high frequency components to the pickup.

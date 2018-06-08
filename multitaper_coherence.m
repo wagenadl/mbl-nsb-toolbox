@@ -13,7 +13,7 @@ function coh = multitaper_coherence(tt, y_ref, y_sig, varargin)
 %       f - single frequency at which to evaluate. Default is [] for
 %           all frequencies.
 %    Return value is a structure with fields:
-%       f - frequency vector (in Hz if t_sig is in seconds) (Fx1 vector)
+%       f - frequency vector (in Hz if tt is in seconds) (Fx1 vector)
 %       coh - coherence estimates for each of the signals (FxN complex matrix)
 %       mag - absolute values of above
 %       phase - phase of above
@@ -40,17 +40,17 @@ function coh = multitaper_coherence(tt, y_ref, y_sig, varargin)
 
 kv = getopt('df=2/3 alpha=0.05 ci=[] f=[]', varargin);
 
-if numel(t_sig) ~= length(t_sig)
-    error('T_SIG must be a vector');
+if numel(tt) ~= length(tt)
+    error('TT must be a vector');
 end
-if std(diff(t_sig)) > .001*mean(diff(t_sig))
-  error('T_SIG must be uniformly increasing');
+if std(diff(tt)) > .001*mean(diff(tt))
+  error('TT must be uniformly increasing');
 end
 if numel(y_sig) == length(y_sig)
     % Y_SIG is a vector, so let's relax about 1xT vs Tx1
     y_sig = y_sig(:);
 end
-t_sig = t_sig(:); % Force T_SIG to be Tx1
+tt = tt(:); % Force TT to be Tx1
 
 if isempty(kv.f) 
   [coh.f, coh.mag, coh.phase, coh.cohs] ...
